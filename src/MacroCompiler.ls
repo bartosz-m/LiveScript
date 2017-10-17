@@ -65,7 +65,7 @@ macro-expansion-selector = node-selector do
         *   type: \Call
         *   type: \Call
             capture:
-                args: -> [..value for it.args]
+                args: -> [..to-macro-value! for it.args]
                 end: -> it{line:last_line, column:last_column}
 
 

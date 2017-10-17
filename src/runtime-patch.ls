@@ -17,7 +17,10 @@ ast.Node-prototype.remove-child = ->
 ast.Node-prototype.replace-child = ->
     throw Error "#{get-type @} doesn't implement method replace-child"
 
-classes = <[ Assign Block Call Cascade Chain Var Splat ]>
+ast.Node-prototype.to-macro-value = ->
+    throw Error "#{get-type @} doesn't implement method to-macro-value"
+
+classes = <[ Assign Block Call Cascade Chain Literal Var Splat ]>
 for name in classes
     ast[name]::type = name
 
@@ -80,3 +83,6 @@ ast.Splat::replace-child = (child, new-one) ->
         @it = new-one
     else
         throw Error "Cannot replace [#{get-type child}] in [Splat]"
+
+ast.Literal::to-macro-value = -> @value
+ast.Var::to-macro-value = -> @value
