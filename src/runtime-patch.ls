@@ -1,0 +1,68 @@
+require! {
+    './ast'
+}
+
+get-type = ->
+    | it.type => that
+    | it@@display-name => that
+    | it@@name => that
+    | otherwise => it.to-string!
+
+# Node isn't exported so we can only access its prototype through from one of its derived classes
+ast.Node-prototype = (Object.get-prototype-of ast.Chain::)
+
+ast.Node-prototype.remove-child = ->
+    throw Error "#{get-type @@} doesn't implement method remove-child"
+
+ast.Node-prototype.replace-child = ->
+    throw Error "#{get-type @} doesn't implement method replace-child"
+
+classes = <[ Assign Block Call Cascade Chain Var ]>
+for name in classes
+    ast[name]::type = name
+
+ast.Block::[Symbol.iterator] = !->*
+    for line in @lines
+        yield line
+
+ast.Chain::[Symbol.iterator] = !->*
+    yield @head
+    for @tails => yield ..
+
+ast.Assign::[Symbol.iterator] = !->*
+    yield @left
+    yield @right
+
+ast.Fun::[Symbol.iterator] = !->*
+    yield @params if @params?
+    yield @body
+
+ast.Block::remove-child = (child) ->
+    idx = @lines.index-of child
+    if @back? and @back == child
+        delete @back
+        return child
+    unless idx >= 0
+        throw Error "[#{child@@name}] nie jest potomkiem [Block]"
+    @lines.splice idx, 1
+
+ast.Block::replace-child = (child, new-one) ->
+    idx = @lines.index-of child
+    if @back? and @back == child
+        @back = new-one
+        return child
+    unless idx >= 0
+        throw Error "[#{child@@name}] nie jest potomkiem [Block]"
+    @lines.splice idx, 1, new-one
+
+ast.Cascade::replace-child = (child, new-one) ->
+    | @input == child => @input = new-one
+    | @output == child => @output = new-one
+    | otherwise => throw Error "[#{get-type child}] nie jest potomkiem [Cascade]"
+
+
+ast.Var::[Symbol.iterator] = ->*
+    yield @value
+
+ast.Call::[Symbol.iterator] = ->*
+    yield @args
