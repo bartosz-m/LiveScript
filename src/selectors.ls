@@ -22,7 +22,7 @@ export node-selector = ({type, capture, properties, series}) ->
             for k,v of props
                 property-selector k
                     ..inner = node-selector v if v?
-        capture: -> [] # nie wiem jak naczej to ogarnąć
+        capture: -> []
         series: (series) -> new SeriesSelector
             for s in series => ..append node-selector s
     selectors = []
@@ -30,7 +30,7 @@ export node-selector = ({type, capture, properties, series}) ->
 
     for own k,v of options
         unless (plugin = plugins[k])?
-            throw Error "nie mam wtyczki dla #{k}"
+            throw Error "missing plugin for #{k}"
         new-selectors = flat-wrap-array plugin v
         selectors.push ...new-selectors
     result =
