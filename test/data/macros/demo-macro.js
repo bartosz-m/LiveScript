@@ -1,14 +1,11 @@
 (function(){
-  var d, x, y, tmp, k, ref$, v;
+  var d, x, y, tmp;
   x = 12;
   y = 1;
     tmp = x;
   x = y;
   y = tmp;;
   console.log(x, y);
-    for (k in ref$ = system) {
-    v = ref$[k];
-    eval("var " + k + " = v");
-  };
+    import * from "os";
     export default d;
 }).call(this);

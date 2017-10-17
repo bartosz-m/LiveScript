@@ -3,11 +3,14 @@ swap! = (a,b) -> """
     #a = #b
     #b = tmp
 """
-define! = (x) ->
-    "var #x"
+define! = (x) -> "var #x"
 
 import-all! = (_module) ->
-    "for k, v of #{_module} => eval " + '"var #k = v"'
+    module-url = if _module.0 == "'"
+        then _module
+        else "\"#_module\""
+    "``import * from #module-url``"
+
 
 esm-export! = (a,b) ->
     if b?
@@ -22,5 +25,5 @@ x = 12
 y = 1
 swap! x, y
 console.log x, y
-import-all! system
+import-all! os
 esm-export! \default, d
