@@ -83,7 +83,7 @@ class MacroCompiler
         ast = ASTCompiler.compile code
         @search-for-macros ast
         @remove-macros-definitions ast
-        ast = @compile ast
+        ast = @transform-ast ast
         file-name-js = filename.replace /.ls$/, '.js'
         file-name-map = file-name-js + '.map'
         output = ast.compile-root {filename}
@@ -170,24 +170,14 @@ class MacroCompiler
         @_need_replacing = []
         result
 
-    compile: (ast) ->
-        while (expressions = @find-macros-expressions ast).length > 0
-            for expression in expressions
-                try
-                    @expand-macro expression
-                catch
-                    e.message = "Expanding macro #{expression.macro.name}: #{e.message}"
-                    throw e
-        ast
-
     transform-ast: (ast) ->
         while (expressions = @find-macros-expressions ast).length > 0
-            # console.log 'Expanding pass'
             for expression in expressions
-                # console.log "expanding #{expression.macro.name}"
                 try
                     @expand-macro expression
                 catch
-                    e.message = "Expanding macro #{expression.macro.name}: #{e.message}"
+                    e.message = if expression?macro?name?
+                        then "Expanding macro #{expression.macro.name}: #{e.message}"
+                        else "Expanding macro: #{e.message}"
                     throw e
         ast

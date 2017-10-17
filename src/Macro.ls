@@ -37,7 +37,7 @@ match-block-expr = node-selector do
             capture: block: -> it
             series: [
                     type: 'Chain'
-                    capture: do-wyjebania: -> it
+                    capture: to-delete: -> it
                     series: [
                         *   type: 'Literal'
                             properties:
@@ -73,16 +73,13 @@ class Macro
 
     (@name, @ast, @parent) ->
         check.args-length 3, &
-        unless @ast => throw Error "Argument 'ast' nie może być #{typeof! @ast}"
+        check.is-defined @ast, \ast
         @type = 'Macro'
         match-block-ast = match-block-expr.match @ast
         if match-block-ast
-            console.log "Mam matcher dla makra #{@name}"
-            # console.log match-block-ast
             matcher = evaluate-ast match-block-ast.args.0
-            # console.log matcher
             @matcher = node-selector matcher
-            match-block-ast.block.remove-child match-block-ast.do-wyjebania
+            match-block-ast.block.remove-child match-block-ast.to-delete
         @block = new AST.Block
         @block.add @ast
         source-node =  eval @block.compile-root {+bare, -header}
