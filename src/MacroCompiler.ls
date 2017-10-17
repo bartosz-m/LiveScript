@@ -7,7 +7,6 @@ require! {
     './check'
     './ASTCompiler'
     './TypeSelector'
-    './SelectorManipulator'
     './AndSelector'
     './SeriesSelector'
     './TypeSelector'
