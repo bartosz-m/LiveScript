@@ -50,9 +50,10 @@
     "source-map-support": "^0.4.11"
   },
   "devDependencies": {
-    "jison": "0.4.17",
-    "uglify-js": "~2.6.2",
+    "browserify": "^13.0.1",
+    "diff-lines": "^1.1.0",
     "istanbul": "~0.4.3",
-    "browserify": "^13.0.1"
+    "jison": "0.4.17",
+    "uglify-js": "~2.6.2"
   }
 }
