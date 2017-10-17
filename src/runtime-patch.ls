@@ -17,7 +17,7 @@ ast.Node-prototype.remove-child = ->
 ast.Node-prototype.replace-child = ->
     throw Error "#{get-type @} doesn't implement method replace-child"
 
-classes = <[ Assign Block Call Cascade Chain Var ]>
+classes = <[ Assign Block Call Cascade Chain Var Splat ]>
 for name in classes
     ast[name]::type = name
 
@@ -38,27 +38,33 @@ ast.Fun::[Symbol.iterator] = !->*
     yield @body
 
 ast.Block::remove-child = (child) ->
-    idx = @lines.index-of child
-    if @back? and @back == child
+    if @back == child
         delete @back
-        return child
+    idx = @lines.index-of child
     unless idx >= 0
-        throw Error "[#{child@@name}] nie jest potomkiem [Block]"
+        throw Error "Cannot remove [#{child@@name}] from [Block]"
     @lines.splice idx, 1
 
 ast.Block::replace-child = (child, new-one) ->
-    idx = @lines.index-of child
     if @back? and @back == child
         @back = new-one
-        return child
+    idx = @lines.index-of child
     unless idx >= 0
-        throw Error "[#{child@@name}] nie jest potomkiem [Block]"
+        throw Error "Cannot replace [#{child@@name}] in [Block]"
     @lines.splice idx, 1, new-one
 
 ast.Cascade::replace-child = (child, new-one) ->
     | @input == child => @input = new-one
     | @output == child => @output = new-one
-    | otherwise => throw Error "[#{get-type child}] nie jest potomkiem [Cascade]"
+    | otherwise => throw Error "Cannot replace [#{get-type child}] in [Cascade]"
+
+ast.Assign::replace-child = (child, new-one) ->
+    if @right == child
+        @right = new-one
+    else if  @left == child
+        @left = new-one
+    else
+        throw Error "Cannot replace [#{get-type child}] in [Assign]"
 
 
 ast.Var::[Symbol.iterator] = ->*
@@ -66,3 +72,11 @@ ast.Var::[Symbol.iterator] = ->*
 
 ast.Call::[Symbol.iterator] = ->*
     yield @args
+
+ast.Splat::[Symbol.iterator] = ->*
+    yield @it
+ast.Splat::replace-child = (child, new-one) ->
+    if child == @it
+        @it = new-one
+    else
+        throw Error "Cannot replace [#{get-type child}] in [Splat]"
