@@ -18,7 +18,8 @@ ast.Node-prototype.replace-child = ->
     throw Error "#{get-type @} doesn't implement method replace-child"
 
 ast.Node-prototype.to-macro-value = ->
-    throw Error "#{get-type @} doesn't implement method to-macro-value"
+    console.warn "Warning: #{get-type @} doesn't implement method to-macro-value"
+    void
 
 classes = <[ Assign Block Call Cascade Chain Literal Var Splat ]>
 for name in classes
