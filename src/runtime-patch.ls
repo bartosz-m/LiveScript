@@ -55,7 +55,10 @@ ast.Block::replace-child = (child, new-one) ->
     idx = @lines.index-of child
     unless idx >= 0
         throw Error "Cannot replace [#{child@@name}] in [Block]"
-    @lines.splice idx, 1, new-one
+    if new-one.type == \Block
+        @lines.splice idx, 1, ...new-one.lines
+    else
+        @lines.splice idx, 1, ...new-one
 
 ast.Cascade::replace-child = (child, new-one) ->
     | @input == child => @input = new-one
