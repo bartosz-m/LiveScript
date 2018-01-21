@@ -12,6 +12,7 @@ exports.Mode = class LiveScriptMode extends require(\ace/mode/text)Mode
       new (require \ace/tokenizer)Tokenizer LiveScriptMode.Rules
     if require \ace/mode/matching_brace_outdent
       @$outdent = new that.MatchingBraceOutdent
+    @$behaviour = @$defaultBehaviour
 
   indenter = // (?
     : [({[=:]
